@@ -8,13 +8,15 @@ OUTPUT_FAT_LIBRARIES_PATH="Generated/Fat libraries"
 FINAL_FRAMEWORK_NAME=""
 
 # Arguments
-while getopts ":p:s:l:" opt; do
+while getopts ":p:s:l:d:" opt; do
   case $opt in
     p) POD_NAME="$OPTARG"
     ;;
     s) SUBPODS="$OPTARG"
     ;;
     l) PODFILE_EXTERNAL_SOURCES="$OPTARG"
+    ;;
+		d) LOCAL_PATH="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
@@ -54,7 +56,15 @@ fi
 printf "\n%s\n\n%s\n" "use_frameworks!" "target 'PodsProject' do" >> Podfile
 
 # Add Pod
-printf "\t%s\n" "pod '$POD_NAME'" >> Podfile
+
+printf "\t%s" "pod '$POD_NAME'" >> Podfile
+
+if [ ! -z "$LOCAL_PATH" ]
+  then
+		printf ", :path => '$LOCAL_PATH'" >> Podfile
+fi
+
+printf "\n" >> Podfile
 
 # Add Subpods if any
 if [ ! -z "$PODFILE_EXTERNAL_SOURCES" ]
